@@ -80,9 +80,9 @@ module.exports = {
                     return
                 }
                 if (rememberMe) {
-                    req.session.cookie.maxAge = 7 * 24 * 60 * 60 * 1000;
+                    // Allow the user to be remembered by the server. When they close the browser and end their session they should not have to login again once they attempt to go to the homepage
                 } else {
-                    req.session.cookie.expires = false;
+                    // Do not remember the user
                 }
                 return res.redirect('/')
             })
@@ -115,7 +115,7 @@ module.exports = {
         }
 
         UserModel.findOne({
-            $or: [{ username: username }, { email: email.toLowerCase() }]
+            // Search query should be looking for a user with the provided username or a user with the provided email
         }, function(err, foundUser) {
             if (err) {
             	console.log("Error finding userModel in signup: %O", err)
@@ -135,9 +135,9 @@ module.exports = {
                     }
                     Passport.authenticate('local')(req, res, function() {
                         if (rememberMe) {
-                            req.session.cookie.maxAge = 7 * 24 * 60 * 60 * 1000;
+                        	// Allow the user to be remembered by the server. When they close the browser and end their session they should not have to login again once they attempt to go to the homepage
                         } else {
-                            req.session.cookie.expires = false;
+                            // Do not remember the user
                         }
                         res.redirect('/')
                     })
@@ -146,9 +146,7 @@ module.exports = {
         })
     },
     isLoggedIn: function(req, res, next) {
-        if (req.isAuthenticated()) {
-            return next()
-        }
+    	// Add a check to see if the user is logged in. If the user is logged in. Call next(), otherwize, redirect them to the login page
         res.redirect("/login")
     },
     logout: function(req, res) {
