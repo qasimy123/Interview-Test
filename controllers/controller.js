@@ -1,3 +1,6 @@
+// Utils
+const { setRememberCookies } = require('../util')
+
 // Models
 UserModel = require("../models/user")
 
@@ -79,11 +82,7 @@ module.exports = {
                     console.log("-- Error req.login user in login: %O", err)
                     return
                 }
-                if (rememberMe) {
-                    // Allow the user to be remembered by the server. When they close the browser and end their session they should not have to login again once they attempt to go to the homepage
-                } else {
-                    // Do not remember the user
-                }
+                setRememberCookies(rememberMe, req)
                 return res.redirect('/')
             })
         })(req, res)
@@ -134,11 +133,7 @@ module.exports = {
                         return
                     }
                     Passport.authenticate('local')(req, res, function() {
-                        if (rememberMe) {
-                        	// Allow the user to be remembered by the server. When they close the browser and end their session they should not have to login again once they attempt to go to the homepage
-                        } else {
-                            // Do not remember the user
-                        }
+                        setRememberCookies(rememberMe, req)
                         res.redirect('/')
                     })
                 })
@@ -147,10 +142,16 @@ module.exports = {
     },
     isLoggedIn: function(req, res, next) {
     	// Add a check to see if the user is logged in. If the user is logged in. Call next(), otherwize, redirect them to the login page
-        res.redirect("/login")
+        if (req.user) {
+            next()
+        } else {
+            res.redirect('/login')
+        }
     },
     logout: function(req, res) {
         req.logout()
-        res.redirect("/login")
+        req.session.destroy(function (err) {
+            res.redirect("/login")
+        });   
     }
 }
