@@ -115,7 +115,11 @@ module.exports = {
 
         UserModel.findOne({
             // Search query should be looking for a user with the provided username or a user with the provided email
-        }, function(err, foundUser) {
+                $or: [
+                    { email },
+                    { username }
+                ]
+            }, function (err, foundUser) {
             if (err) {
             	console.log("Error finding userModel in signup: %O", err)
             } else if (foundUser) {
@@ -141,7 +145,7 @@ module.exports = {
         })
     },
     isLoggedIn: function(req, res, next) {
-    	// Add a check to see if the user is logged in. If the user is logged in. Call next(), otherwize, redirect them to the login page
+        // Add a check to see if the user is logged in. If the user is logged in. Call next(), otherwize, redirect them to the login page
         if (req.user) {
             next()
         } else {
