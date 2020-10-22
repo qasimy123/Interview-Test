@@ -45,18 +45,34 @@
                     <p class="fs--1 text-600 mb-0">Have an account? <a href="/login">Login</a></p>
                   </div>
                 </div>
-                <form action="/signup" method="post" id='form'>
+                <form class="form-validation" data-options='{"rules":{"confirmPassword":{"equalTo":"#password-field"}, "password": {
+                  "strongPassword":"true"
+              }}}' action="/signup" method="post" id='form'>
                   <div class="mb-3">
-                    <input id='username' class="form-control" type="text" placeholder="Username" name="username"
-                      required>
-                  </div>                  
-                  <div class="mb-3">
-                    <input class="form-control" type="email" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" placeholder="Email address" name="email" required>
+                    <input id='username' data-rule-minlength="6" class="form-control" type="text" placeholder="Username"
+                      name="username" required data-msg-minlength="Your username is too short">
+                    <small class="form-text text-muted">Username must be atleast <span class="text-info">6</span>
+                      characters long</small>
                   </div>
                   <div class="mb-3">
-                    <input class="form-control" type="password" placeholder="Password" name="password" required>
+                    <input class="form-control" type="email" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}"
+                      placeholder="Email address" name="email" required>
                   </div>
-                  <!-- Impliment EJS here to add the error message to the screen https://ejs.co/ -->
+                  <div class="row mb-3">
+                    <div class="col-sm">
+                      <input autocomplete="new-password" class="form-control" data-rule-minlength="8" required
+                        data-msg-minlength="Your password is too short" type="password" placeholder="Password"
+                        name="password" id="password-field" required>
+                    </div>
+                    <div class="col-sm">
+                      <input autocomplete="new-password" class="form-control" type="password"
+                        placeholder="Confirm Password" name="confirmPassword" id="confirm-password-field" required>
+                    </div>
+                  </div>
+                  <small class="form-text text-muted">Password must be atleast <span class="text-info">8</span>
+                    characters long and must contain an <span class="text-info">Upper Case Letter</span> and a <span
+                      class="text-info">Number</span></small>
+                  <p class="text-danger font-weight-light"><%= errorMessage %></p>
                   <div class="form-check"><input class="form-check-input" type="checkbox" id="remember-me"
                       name="rememberMe"><label class="form-label" for="remember-me">Remember Me</label></div>
                   <div class="mb-3"><button class="btn btn-primary btn-block mt-3" type="submit"
@@ -96,6 +112,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser-polyfill.min.js"></script>
   <script src="/lib/progressbar.js/progressbar.min.js"></script>
   <script src="/js/falcon/theme.js"></script>
+  <script src="/lib/jquery-validation/jquery.validate.min.js"></script>
+  <script>
+    $.validator.addMethod("strongPassword", function (value) {
+      return /^(?:(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*)$/.test(value);
+    }, "Your password does not meet the requirements"); 
+  </script>
 </body>
 
 </html>
